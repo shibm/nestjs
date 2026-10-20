@@ -53,7 +53,7 @@ Incoming Request
 ```
 
 ### Key Architectural Concepts Implemented:
-1. **Modules (`@Module`)**: Feature-level encapsulation (`ProductsModule`, `AppModule`).
+1. **Modules (`@Module`)**: Feature-level encapsulation (`UsersModule`, `ProductsModule`, `AppModule`).
 2. **Controllers (`@Controller`)**: Routing, handling incoming requests, returning appropriate HTTP status codes.
 3. **Services (`@Injectable`)**: Encapsulates business logic and database interactions via Dependency Injection.
 4. **Data Transfer Objects (DTOs)**: Define data shape and enforce payload validation rules at runtime with `class-validator` and `class-transformer`.
@@ -69,7 +69,7 @@ Incoming Request
 src/
 ├── app.controller.spec.ts
 ├── app.controller.ts            # Root controller (health check)
-├── app.module.ts                # Root module (loads Config & Mongoose)
+├── app.module.ts                # Root module (loads Config, Mongoose, Users & Products)
 ├── app.service.ts               # Root service
 ├── main.ts                      # Application entrypoint & global configuration
 ├── common/                      # Shared reusable architecture layers
@@ -78,6 +78,17 @@ src/
 │   └── pipes/
 │       ├── parse-object-id.pipe.ts    # Custom MongoDB ObjectId validation
 │       └── parse-object-id.pipe.spec.ts
+├── users/                       # Feature Module: Users CRUD (mapped to Atlas 'users' collection)
+│   ├── dto/
+│   │   ├── create-user.dto.ts
+│   │   └── update-user.dto.ts
+│   ├── schemas/
+│   │   └── user.schema.ts
+│   ├── users.controller.ts      # REST API routes: /api/users
+│   ├── users.controller.spec.ts
+│   ├── users.service.ts         # Business logic & conflict handling (duplicate emails)
+│   ├── users.service.spec.ts
+│   └── users.module.ts
 └── products/                    # Feature Module: Products CRUD
     ├── dto/
     │   ├── create-product.dto.ts      # Payload validation for creation
@@ -157,6 +168,13 @@ Base URL: `http://localhost:3000/api`
 | Method | Endpoint | Description | Status Code |
 | :--- | :--- | :--- | :--- |
 | `GET` | `/` | Health check | 200 OK |
+| **Users** | | | |
+| `POST` | `/users` | Create user in Atlas 'users' collection | 201 Created |
+| `GET` | `/users` | Get all users | 200 OK |
+| `GET` | `/users/:id` | Get user by MongoDB ObjectId | 200 OK |
+| `PATCH` | `/users/:id` | Update user | 200 OK |
+| `DELETE` | `/users/:id` | Delete user | 200 OK |
+| **Products** | | | |
 | `POST` | `/products` | Create a product | 201 Created |
 | `GET` | `/products` | Get products (supports search, category, price, pagination) | 200 OK |
 | `GET` | `/products/:id` | Get single product by MongoDB ObjectId | 200 OK |

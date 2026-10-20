@@ -1,0 +1,150 @@
+### NestJS Mongoose CRUD API - HTTP Test Requests
+### Base URL
+@baseUrl = http://localhost:3000/api
+
+### 1. Root Health Check
+GET {{baseUrl}}/
+Accept: text/plain
+
+### ===============================
+### USERS CRUD (Mapped to MongoDB Atlas 'users' collection)
+### ===============================
+
+### 2. Create User 1 (POST /users)
+# @name createUser
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "name": "Saurabh Bhandari",
+  "email": "saurabh@example.com",
+  "role": "admin",
+  "age": 25,
+  "isActive": true
+}
+
+### 3. Create User 2
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "name": "Jane Doe",
+  "email": "jane@example.com",
+  "role": "user",
+  "age": 28,
+  "isActive": true
+}
+
+### 4. Get All Users (GET /users)
+GET {{baseUrl}}/users
+Accept: application/json
+
+### 5. Get User by ID (GET /users/:id)
+# Replace with the _id returned from createUser above
+@userId = 658d4a22f98c657b2cea8f33
+GET {{baseUrl}}/users/{{userId}}
+Accept: application/json
+
+### 6. Update User (PATCH /users/:id)
+PATCH {{baseUrl}}/users/{{userId}}
+Content-Type: application/json
+
+{
+  "age": 26,
+  "isActive": false
+}
+
+### 7. Delete User (DELETE /users/:id)
+DELETE {{baseUrl}}/users/{{userId}}
+Accept: application/json
+
+### ===============================
+### PRODUCTS CRUD
+### ===============================
+
+### 8. Create a Product (POST /products)
+# @name createProduct
+POST {{baseUrl}}/products
+Content-Type: application/json
+
+{
+  "title": "Ergonomic Mechanical Keyboard",
+  "description": "Wireless mechanical keyboard with RGB backlighting and hot-swappable switches",
+  "price": 129.99,
+  "category": "Electronics",
+  "inStock": true,
+  "tags": ["peripherals", "keyboard", "wireless"]
+}
+
+### 3. Create a Second Product
+POST {{baseUrl}}/products
+Content-Type: application/json
+
+{
+  "title": "Ultra-Wide Gaming Monitor 34-inch",
+  "description": "144Hz curved gaming display with HDR400",
+  "price": 499.50,
+  "category": "Electronics",
+  "inStock": true,
+  "tags": ["monitor", "gaming", "ultrawide"]
+}
+
+### 4. Create a Third Product (Different Category)
+POST {{baseUrl}}/products
+Content-Type: application/json
+
+{
+  "title": "Ergonomic Desk Chair",
+  "description": "Adjustable lumbar support breathable mesh chair",
+  "price": 249.00,
+  "category": "Furniture",
+  "inStock": true,
+  "tags": ["furniture", "ergonomic", "office"]
+}
+
+### 5. Get All Products (GET /products)
+GET {{baseUrl}}/products
+Accept: application/json
+
+### 6. Filter & Paginate Products
+# Filter by category and price range with pagination
+GET {{baseUrl}}/products?category=Electronics&minPrice=100&maxPrice=1000&page=1&limit=5
+Accept: application/json
+
+### 7. Search Products by Text Index
+GET {{baseUrl}}/products?search=Mechanical
+Accept: application/json
+
+### 8. Get Product by ID (GET /products/:id)
+# Replace with an actual ObjectID returned from POST /products
+@productId = 507f1f77bcf86cd799439011
+GET {{baseUrl}}/products/{{productId}}
+Accept: application/json
+
+### 9. Partially Update Product (PATCH /products/:id)
+PATCH {{baseUrl}}/products/{{productId}}
+Content-Type: application/json
+
+{
+  "price": 109.99,
+  "inStock": false
+}
+
+### 10. Delete Product (DELETE /products/:id)
+DELETE {{baseUrl}}/products/{{productId}}
+Accept: application/json
+
+### 11. Test Validation: Invalid Payload (Should return 400 Bad Request)
+POST {{baseUrl}}/products
+Content-Type: application/json
+
+{
+  "title": "A",
+  "price": -10,
+  "unknownField": "not allowed"
+}
+
+### 12. Test Validation: Invalid MongoDB ID format (Should return 400 Bad Request)
+GET {{baseUrl}}/products/not-a-valid-id
+Accept: application/json
+
